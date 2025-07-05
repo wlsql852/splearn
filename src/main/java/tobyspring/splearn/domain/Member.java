@@ -1,11 +1,14 @@
 package tobyspring.splearn.domain;
 
 import lombok.Getter;
+import lombok.ToString;
+import org.springframework.util.Assert;
 
 import java.util.Objects;
 
 
 @Getter
+@ToString    //enum값 한글로 넣기
 public class Member {
     private String email;
 
@@ -14,13 +17,41 @@ public class Member {
 
     private String passwordHash;
 
+//    @Getter(AccessLevel.NONE)  //getter를 안만듬
     private MemberStatus status;
 
-    public Member(String email, String nickname, String passwordHash) {
+    private Member(String email, String nickname, String passwordHash) {   //@NonNull을 위해 @NotNull String email,...을 사용할수도 있음
         this.email = Objects.requireNonNull(email);   //requireNonNull() : 널값이 들어오면 실행 안함
         this.nickname = Objects.requireNonNull(nickname);
         this.passwordHash = Objects.requireNonNull(passwordHash);
         this.status = MemberStatus.PENDING;
     }
 
+
+    public static Member create(String email, String nickname, String password, PasswordEncoder passwordEncoder) {
+        return new Member(email, nickname, passwordEncoder.encode(password));
+    }
+
+    public void activate() {
+       // if (status != MemberStatus.PENDING) throw new IllegalStateException("Member is not Pending.");
+        Assert.state(status == MemberStatus.PENDING, "Member is not Pending");
+        this.status = MemberStatus.ACTIVE;
+    }
+
+    public void deactivate() {
+        Assert.state(status == MemberStatus.ACTIVE, "Member is not Active");
+        this.status = MemberStatus.DEACTIVATED;
+    }
+
+    public boolean verifyPassword(String password, PasswordEncoder passwordEncoder) {
+        return passwordEncoder.matches(password, this.passwordHash);
+    }
+
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void changePassword(String password,  PasswordEncoder passwordEncoder) {
+        this.passwordHash = passwordEncoder.encode(password);
+    }
 }
