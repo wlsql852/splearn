@@ -1,15 +1,27 @@
 package tobyspring.splearn.domain;
 
+import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
 import org.springframework.util.Assert;
 
 import java.util.Objects;
 
-
+@Entity
 @Getter
 @ToString    //enum값 한글로 넣기
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NaturalIdCache //데이터를 읽어올때 이메일을 id로 읽어올 수 있음
 public class Member {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Embedded   //Mysql 에서 지정하지 않은 타입이므로 Embedded-Embeddable 설정
+    @NaturalId  //비즈니스적으로 의미가 있는 자연키
     private Email email;
 
     private String nickname;
@@ -18,23 +30,11 @@ public class Member {
     private String passwordHash;
 
 //    @Getter(AccessLevel.NONE)  //getter를 안만듬
+    @Enumerated(EnumType.STRING)
     private MemberStatus status;
 
 
-//    private Member(String email, String nickname, String passwordHash) {   //@NonNull을 위해 @NotNull String email,...을 사용할수도 있음
-//        this.email = Objects.requireNonNull(email);   //requireNonNull() : 널값이 들어오면 실행 안함
-//        this.nickname = Objects.requireNonNull(nickname);
-//        this.passwordHash = Objects.requireNonNull(passwordHash);
-//        this.status = MemberStatus.PENDING;
-//    }
-
-//    public static Member create(String email, String nickname, String password, PasswordEncoder passwordEncoder) {
-//        return new Member(email, nickname, passwordEncoder.encode(password));
-//    }
-
-    private Member() {}
-
-    public static Member create(MemberCreateRequest createRequest, PasswordEncoder passwordEncoder) {
+    public static Member register(MemberResisterRequest createRequest, PasswordEncoder passwordEncoder) {
         Member member = new Member();
 
         member.email = new Email(createRequest.email());
