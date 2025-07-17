@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://www.hibernate.org/xsd/orm/mapping"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://www.hibernate.org/xsd/orm/mapping
+                                     https://hibernate.org/xsd/orm/mapping/mapping-3.1.0.xsd">
+    <access>FIELD</access>
+
+    <mapped-superclass class="tobyspring.splearn.domain.AbstractEntity">   <!--id설정-->
+        <attributes>
+            <id name="id">
+                <column name="id"/>
+                <generated-value strategy="IDENTITY"/>
+            </id>
+        </attributes>
+    </mapped-superclass>
+
+    <entity class="tobyspring.splearn.domain.Member">
+        <table name="member">
+            <unique-constraint name="UK_EMAIL">
+                <column-name>email_address</column-name>
+            </unique-constraint>
+        </table>
+        <attributes><!--속성 설정-->
+            <basic name="nickname">
+                <column name="nicknam" nullable="false" length="100"/>
+            </basic>
+            <basic name="passwordHash">
+                <column name="password_hash" nullable="false" length="100"/>
+            </basic>
+            <basic name="status">
+                <column name="status" nullable="false" length="20"/>
+                <enumerated>STRING</enumerated>
+            </basic>
+            <embedded name="email"></embedded>
+        </attributes>
+    </entity>
+</entity-mappings>
