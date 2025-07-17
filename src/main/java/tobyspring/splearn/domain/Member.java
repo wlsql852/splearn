@@ -13,7 +13,7 @@ import java.util.Objects;
 
 @Entity
 @Getter
-@ToString    //enum값 한글로 넣기
+@ToString(callSuper = true)   //enum값 한글로 넣기
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @NaturalIdCache //데이터를 읽어올때 이메일을 id로 읽어올 수 있음
 public class Member extends AbstractEntity {
