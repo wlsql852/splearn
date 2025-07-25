@@ -1,6 +1,7 @@
 package tobyspring.splearn.domain;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,9 @@ public class Member extends AbstractEntity {
     private String passwordHash;
 
     private MemberStatus status;
+
+    @OneToOne
+    private MemberDetail detail;
 
     public static Member register(MemberResisterRequest createRequest, PasswordEncoder passwordEncoder) {
         Member member = new Member();
