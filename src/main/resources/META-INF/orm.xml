@@ -39,7 +39,7 @@
                     <cascade-all/>
                 </cascade>
             </one-to-one>
-            <embedded name="email"></embedded>
+            <embedded name="email"/>
         </attributes>
     </entity>
     <entity class="tobyspring.splearn.domain.member.MemberDetail">

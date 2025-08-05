@@ -60,11 +60,9 @@ public class Member extends AbstractEntity {
         return passwordEncoder.matches(passwordEncoder.encode(password), this.passwordHash);
     }
 
-    public void changeNickname(String nickname) {
-        this.nickname = Objects.requireNonNull(nickname);
-    }
 
     public void updateInfo(MemberInfoUpdateRequest updateRequest) {
+        Assert.state(getStatus() == MemberStatus.ACTIVE, "등록 완료 상태가 아니면 정보를 수정할 수 없습니다.");
         this.nickname = updateRequest.nickname();
         this.detail.updateInfo(updateRequest);
     }
