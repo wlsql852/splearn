@@ -14,7 +14,7 @@
         </attributes>
     </mapped-superclass>
 
-    <entity class="tobyspring.splearn.domain.Member">
+    <entity class="tobyspring.splearn.domain.member.Member">
         <table name="member">
             <unique-constraint name="UK_EMAIL">
                 <column-name>email_address</column-name>

@@ -1,6 +1,8 @@
-package tobyspring.splearn.domain;
+package tobyspring.splearn.domain.member;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,12 +11,14 @@ import lombok.ToString;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.springframework.util.Assert;
+import tobyspring.splearn.domain.AbstractEntity;
+import tobyspring.splearn.domain.shared.Email;
 
 import java.util.Objects;
 
 @Entity
 @Getter
-@ToString(callSuper = true)   //enum값 한글로 넣기
+@ToString(callSuper = true, exclude = "detail")   //enum값 한글로 넣기
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @NaturalIdCache //데이터를 읽어올때 이메일을 id로 읽어올 수 있음
 public class Member extends AbstractEntity {
@@ -27,7 +31,7 @@ public class Member extends AbstractEntity {
 
     private MemberStatus status;
 
-//    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private MemberDetail detail;
 
     public static Member register(MemberResisterRequest createRequest, PasswordEncoder passwordEncoder) {
@@ -37,6 +41,8 @@ public class Member extends AbstractEntity {
         member.nickname = Objects.requireNonNull(createRequest.nickname());
         member.passwordHash = Objects.requireNonNull(passwordEncoder.encode(createRequest.password()));
         member.status = MemberStatus.PENDING;
+
+        member.detail =  MemberDetail.create();
         return member;
     }
 
@@ -44,11 +50,13 @@ public class Member extends AbstractEntity {
        // if (status != MemberStatus.PENDING) throw new IllegalStateException("Member is not Pending.");
         Assert.state(status == MemberStatus.PENDING, "Member is not Pending");
         this.status = MemberStatus.ACTIVE;
+        this.detail.setActivatedAt();
     }
 
     public void deactivate() {
         Assert.state(status == MemberStatus.ACTIVE, "Member is not Active");
         this.status = MemberStatus.DEACTIVATED;
+        this.detail.deactivate();
     }
 
     public boolean verifyPassword(String password, PasswordEncoder passwordEncoder) {
@@ -57,6 +65,11 @@ public class Member extends AbstractEntity {
 
     public void changeNickname(String nickname) {
         this.nickname = Objects.requireNonNull(nickname);
+    }
+
+    public void updateInfo(MemberInfoUpdateRequest updateRequest) {
+        this.nickname = updateRequest.nickname();
+        this.detail.updateInfo(updateRequest);
     }
 
     public void changePassword(String password,  PasswordEncoder passwordEncoder) {
