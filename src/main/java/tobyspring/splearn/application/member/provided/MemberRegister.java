@@ -6,10 +6,10 @@ package tobyspring.splearn.application.member.provided;
 import jakarta.validation.Valid;
 import tobyspring.splearn.domain.member.Member;
 import tobyspring.splearn.domain.member.MemberInfoUpdateRequest;
-import tobyspring.splearn.domain.member.MemberResisterRequest;
+import tobyspring.splearn.domain.member.MemberRegisterRequest;
 
 public interface MemberRegister {
-    Member register(@Valid MemberResisterRequest resisterRequest);
+    Member register(@Valid MemberRegisterRequest resisterRequest);
 
     Member activate(Long memberId);
 

@@ -1,8 +1,6 @@
 package tobyspring.splearn.application.member;
 
 import jakarta.transaction.Transactional;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -24,7 +22,7 @@ public class MemberModifyService implements MemberRegister {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Member register(MemberResisterRequest resisterRequest) {
+    public Member register(MemberRegisterRequest resisterRequest) {
         checkDuplicateEmail(resisterRequest);
 
         Member member = Member.register(resisterRequest, passwordEncoder);
@@ -74,7 +72,7 @@ public class MemberModifyService implements MemberRegister {
         emailSender.send(member.getEmail(), "등록을 완료해주세요", "아래 링크를 클릭해서 등록을 완료해주세요");
     }
 
-    private void checkDuplicateEmail(MemberResisterRequest resisterRequest) {
+    private void checkDuplicateEmail(MemberRegisterRequest resisterRequest) {
         if(memberRepository.findByEmail(new Email(resisterRequest.email())).isPresent()){
             throw new DuplicateEmailException("이미 사용중인 이메일입니다: "+ resisterRequest.email());
         }

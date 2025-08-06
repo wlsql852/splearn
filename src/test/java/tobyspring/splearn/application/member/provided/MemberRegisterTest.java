@@ -44,13 +44,13 @@ record MemberRegisterTest (MemberRegister memberRegister, EntityManager entityMa
     
     @Test
     void memberRegisterRequestFail() {
-        checkValidation(new MemberResisterRequest("toby@splearn.app","toby","secret"));
-        checkValidation(new MemberResisterRequest("toby@splearn.app","Charlie_______________________","longsecret"));
-        checkValidation(new MemberResisterRequest("tobysplearn.app","Charlie","longsecret"));
+        checkValidation(new MemberRegisterRequest("toby@splearn.app","toby","secret"));
+        checkValidation(new MemberRegisterRequest("toby@splearn.app","Charlie_______________________","longsecret"));
+        checkValidation(new MemberRegisterRequest("tobysplearn.app","Charlie","longsecret"));
 
     }
 
-    private void checkValidation(MemberResisterRequest invalid) {
+    private void checkValidation(MemberRegisterRequest invalid) {
         assertThatThrownBy(()->  memberRegister.register(invalid))
                 .isInstanceOf(ConstraintViolationException.class);
     }
